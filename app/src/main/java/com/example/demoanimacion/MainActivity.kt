@@ -1,5 +1,6 @@
 package com.example.demoanimacion
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.view.View
@@ -13,7 +14,11 @@ class MainActivity : AppCompatActivity() {
 
     val NAME_CUSTOMER = arrayOf("Lucas", "Juan", "Paz", "Vanesa", "Valeria", "Karla")
     val ANIMATION =
-        arrayOf("icon-animation.json", "test-loading.json", "animacion-ted.json", "6863-tenor.json")
+        arrayOf(
+            "search-file.json",
+            "icon-animation.json",
+            "animacion-ted.json"
+        )
     val TEXT_ITEMS = arrayOf(
         "Un horno para mejorar la cocina de tu emprendimiento.",
         "Nuevas herramientas para tu taller."
@@ -25,7 +30,7 @@ class MainActivity : AppCompatActivity() {
     )
     var animationRandom = ""
     var client = ""
-    val timer = Timer()
+    var timer = Timer()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,29 +38,30 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
 
-
-
         button.setOnClickListener {
-            var textValueItems = 0
-            val time = (1000..30000).random()
-            client = NAME_CUSTOMER.random()
-            animationRandom = ANIMATION.random()
-            val animation = AnimationUtils.loadAnimation(this, R.anim.zoom_in)
-            textview_items.startAnimation(animation)
-            starAnimation()
-            stopAnimation(time)
-            val monitor = object : TimerTask() {
-                override fun run() {
-                    if (textValueItems < 4) {
-                        textValueItems++
-                        runOnUiThread {
-                            textview_items.text = TEXT_ITEMS[textValueItems]
-                        }
-                    } else if (textValueItems >= 4)
-                        textValueItems = 0
+                timer.cancel()
+                timer = Timer()
+                var textValueItems = 0
+                val time = (1000..30000).random()
+                client = NAME_CUSTOMER.random()
+                animationRandom = ANIMATION.random()
+                val animation = AnimationUtils.loadAnimation(this, R.anim.zoom_in)
+                textview_items.startAnimation(animation)
+                stopAnimation(time)
+                starAnimation()
+                val monitor = object : TimerTask() {
+                    override fun run() {
+                        if (textValueItems < 4) {
+                            textValueItems++
+                            runOnUiThread {
+                                textview_items.text = TEXT_ITEMS[textValueItems]
+                            }
+                        } else if (textValueItems >= 4)
+                            textValueItems = 0
+                    }
                 }
-            }
-            timer.schedule(monitor, 4000, 4000)
+                timer.schedule(monitor, 3000, 3000)
+
 
         }
 
@@ -63,14 +69,15 @@ class MainActivity : AppCompatActivity() {
 
     fun stopAnimation(time: Int) {
         Handler().postDelayed({
-            textView.visibility = View.GONE
             animation.visibility = View.GONE
+            animationWarning.visibility = View.VISIBLE
+            animationWarning.setAnimation("warning-animation.json")
+            textView.text = getString(R.string.disculpa)
             textviewTitle.visibility = View.GONE
             textview_items.visibility = View.GONE
             textview_items.clearAnimation()
-            button.visibility = View.VISIBLE
+            button.visibility = View.GONE
             animation.pauseAnimation()
-            timer.purge()
         }, time.toLong())
 
     }
@@ -86,6 +93,12 @@ class MainActivity : AppCompatActivity() {
         textView.text = text
         textView.visibility = View.VISIBLE
         button.visibility = View.GONE
+
+    }
+
+    override fun onBackPressed() {
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
     }
 
 }
