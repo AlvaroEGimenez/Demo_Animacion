@@ -1,10 +1,9 @@
 package com.example.demoanimacion
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Handler
 import android.view.animation.AnimationUtils
+import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_splash.*
 
 class SplashActivity : AppCompatActivity() {
@@ -13,13 +12,20 @@ class SplashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
 
-        val animation = AnimationUtils.loadAnimation(this, R.anim.zoom_in)
-        logo.startAnimation(animation)
+        val intent = Intent(this, MainActivity::class.java)
 
-        Handler().postDelayed({
-            val intent = Intent(this, MainActivity::class.java)
-            // start your next activity
+
+        button_ads.setOnClickListener {
+            intent.putExtra("type", 1)
             startActivity(intent)
-        },2800)
+        }
+        button_express.setOnClickListener {
+            intent.putExtra("type", 2)
+            startActivity(intent)
+        }
+        button_pp.setOnClickListener {
+            intent.putExtra("type", 3)
+            startActivity(intent)
+        }
     }
 }
